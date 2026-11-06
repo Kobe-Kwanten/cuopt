@@ -29,6 +29,7 @@ ARG CUDA_ARCHITECTURES=90
 
 ENV DEBIAN_FRONTEND=noninteractive \
     MAMBA_ROOT_PREFIX=/opt/mamba \
+    CONDA_PREFIX=/opt/conda \
     PYTHONNOUSERSITE=1 \
     CCACHE_DIR=/root/.cache/ccache \
     CCACHE_BASEDIR=/src \
