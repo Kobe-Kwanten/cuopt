@@ -32,6 +32,10 @@ IMAGE=docker.io/<dockerhub-user>/cuopt:break-load-windows \
   ./ci/docker/build_source_image.sh
 ```
 
+The script starts the build with `nohup` and writes progress to `build.log` by
+default. Follow it with `tail -f build.log`, or set `BUILD_LOG` to use another
+log-file path.
+
 The source-image default is one compile job because each CUDA compile needs
 several GiB of RAM. Raise `PARALLEL_LEVEL` only on a builder with enough
 available memory.

@@ -16,6 +16,7 @@ cuda_runtime_image="${CUDA_RUNTIME_IMAGE:-nvidia/cuda:13.3.0-runtime-ubuntu24.04
 parallel_level="${PARALLEL_LEVEL:-1}"
 cuda_architectures="${CUDA_ARCHITECTURES:-90}"
 source_context="${SOURCE_CONTEXT:-.}"
+build_log="${BUILD_LOG:-build.log}"
 
 build_args=(
     --file ci/docker/Dockerfile.source
@@ -31,9 +32,15 @@ build_args=(
 
 # A normal Docker build makes a locally runnable image. `--push` is used only
 # when explicitly requested, avoiding accidental publication of development
-# code. BuildKit cache mounts in Dockerfile.source require BuildKit.
+# code. BuildKit cache mounts in Dockerfile.source require BuildKit. Run the
+# lengthy image build independently of the invoking terminal and retain its
+# full output in the selected log file.
 if [[ "${PUSH:-0}" == "1" ]]; then
-    docker buildx build --progress=plain --push "${build_args[@]}" .
+    build_command=(docker buildx build --progress=plain --push "${build_args[@]}" .)
 else
-    docker buildx build --progress=plain --load "${build_args[@]}" .
+    build_command=(docker buildx build --progress=plain --load "${build_args[@]}" .)
 fi
+
+nohup "${build_command[@]}" > "${build_log}" 2>&1 &
+build_pid=$!
+echo "Started Docker build (PID ${build_pid}); follow progress with: tail -f ${build_log}"
