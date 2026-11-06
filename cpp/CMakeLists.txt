@@ -1394,10 +1394,10 @@ install(DIRECTORY include/cuopt/utilities/
 )
 
 # routing_structures.hpp uses the assertion helpers from this shared internal
-# header. Install it at the same relative path so downstream C++ consumers,
-# including the Python wheel build, can resolve the public routing headers.
+# header. The header includes it as <utilities/macros.cuh>, so retain that
+# path under the install include root for downstream C++ consumers.
 install(FILES src/utilities/macros.cuh
-        DESTINATION ${_INCLUDE_DEST}/utilities
+        DESTINATION include/utilities
         COMPONENT client-dev
 )
 
